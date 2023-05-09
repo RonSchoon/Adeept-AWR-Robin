@@ -1,0 +1,210 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Video Streaming Demonstration - Working with Flask and </title>
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon.png') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='joy.js') }}"></script>
+    <script src="{{url_for('static',filename='script.js')}}" defer></script>
+  <script>
+    $SCRIPT_ROOT = {{ request.script_root|tojson }};
+  
+///////////
+// Helpers
+// adds left mouse button down and up handlers for given html button ids
+// function... provides the funtion to call. If null, no handler will be added for this mouse event
+function addEventListenerDownUp(id, functionDown, functionUp) {
+    let element = document.getElementById(id);
+    if (element !== null) {
+        if (isTouchEnabled()) {
+            if (functionDown !== null) {
+                element.addEventListener("touchstart", function() {
+                    functionDown();
+                });
+            }
+            if (functionUp !== null) {
+                element.addEventListener("touchend", function() {
+                    functionUp();
+                });
+            }
+        } else {
+            if (functionDown !== null) {
+                element.addEventListener("mousedown", event => {
+                    if (event.button == 0) {
+                        functionDown();
+                    }
+                });
+            }
+            if (functionUp !== null) {
+                element.addEventListener("mouseup", event => {
+                    if (event.button == 0) {
+                        functionUp();
+                    }
+                });
+            }
+        }
+    } else {
+        alert("Please check your html page. There is no element with id: " + id + "! Any typo?");
+    }
+}
+
+function isTouchEnabled() {
+    return ( 'ontouchstart' in window );
+}
+
+function runColor() {
+      $.getJSON($SCRIPT_ROOT + '/functionSelect', {
+        command: 'color',
+        value: document.getElementById("favcolor").value
+      }, function(data) {
+        $("#result").text(data.result);
+      });
+      return false;
+    }
+
+function initButtons() {
+      // camera
+      // addEventListenerDownUp('btnCamUp', camUp, null);
+      // addEventListenerDownUp('btnCamDown', camDown, null);
+      // drive control
+      // addEventListenerDownUp('btnDCForward', runDCForward, stopDC);
+      // addEventListenerDownUp('btnDCBackward', runDCBackward, stopDC);
+      // addEventListenerDownUp('btnDCLeft', runDCLeft, stopTurning);
+      // addEventListenerDownUp('btnDCRight', runDCRight, stopTurning);
+      // if(isTouchEnabled()) {
+      //   document.addEventListener("touchmove", joyRiding, false);
+      //   document.getElementById('joy1Div').addEventListener("touchend", stopDC);
+      // } else {
+      //   document.addEventListener("mousemove", joyRiding, false);
+      // }
+      // actions
+      // addEventListenerDownUp('btnGreen', runGreen, stopLight);
+      addEventListenerDownUp('btnColor', runColor, stopLight);
+      // addEventListenerDownUp('btnPolice', runPolice, null);
+      // addEventListenerDownUp('btnPoliceOff', stopLight, null);
+      // addEventListenerDownUp('btnWatchdog', runWatchdog, null);
+      // addEventListenerDownUp('btnWatchdogOff', stopWatchdog, null);
+      // addEventListenerDownUp('btnAutopilot', runAutopilot, null);
+      // addEventListenerDownUp('btnAutopilotOff', stopAutopilot, null);
+}
+
+function getRobotStatus() {
+  $.getJSON($SCRIPT_ROOT + '/functionSelect',{
+        command: 'info'
+      }, function(data) {
+        $("#status").text(data.result);
+      });
+      return false;
+}
+
+window.onload = function initAll() {
+    // run the following once the webpage fully loaded
+    // initButtons();                        // add mouse event handlers
+    // getJoyStick();                        // Initialize JoyStick
+    // setInterval(getRobotStatus, 5000);    // request robot status every 5 secs.
+    // setInterval(fetchCommand('info'), 5000);    // request robot status every 5 secs.
+}
+
+  </script>
+  
+  </head>
+  <body>
+
+    <h1>Video Streaming Demonstration for {{ username }}</h1>
+    <div id="VideoFeed" class="panel" style="float: right;">
+      <img src="{{ url_for('video_feed') }}" alt="No Videostream yet"><br>
+      Status: <span id=status>?</span><br>
+      Last Command: <span id=result>?</span>
+    </div>
+
+  <div style="float: left;">   
+    <!-- Camera control -->
+    <div id="camCtrl" class="panel">
+        <b>Camera Control</b>
+        <div class="innerPanel">
+            <table class="table">
+                <tbody>
+                <tr>
+                    <td><input title="camera rotates upward" type="button" class="button" id="btnCamUp" value="&#x1F4F7; &uarr;"></td>
+                    <td><input title="camera rotates downward" type="button" class="button" id="btnCamDown" value="&#x1F4F7; &darr;"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Robot drive control -->
+    <div id="driveCtrl" class="panel">
+        <b>Move Control</b>
+        <div class="innerPanel">
+            <table class="table">
+                <tbody>
+                <tr>
+                    <td></td>
+                    <td><input title="move forward" type="button" class="button" id="btnDCForward" value=&uarr;></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><input title="turn left" type="button" class="button" id="btnDCLeft" value=&larr;></td>
+                    <td></td>
+                    <td><input title="turn right" type="button" class="button" id="btnDCRight" value=&rarr;></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input title="move backward" type="button" class="button" id="btnDCBackward" value=&darr;></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td style="text-align: right; vertical-align: middle;">Speed:</td>
+                    <td colspan="2"><input type="range" id="rangeDCSpeed" name="rangeSpeed" min="0" max="100" value="100" step="1" onchange="speedChange(this.value)"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+			<div class="columnLateral">
+				<div id="joy1Div" style="width:150px;height:150px;margin:0px"></div>
+				Position X:<input id="joy1PosizioneX" type="text"><br>
+				Position Y:<input id="joy1PosizioneY" type="text"><br>
+				Direction:<input id="joy1Direzione" type="text"><br>
+				X :<input id="joy1X" type="text"></br>
+				Y :<input id="joy1Y" type="text">
+			</div>
+    
+        <!-- Action control -->
+    <div id="ActionCtrl" class="panel">
+        <b>Action Control</b>
+        <div class="innerPanel">
+            <table class="table">
+              <tbody>
+                <tr>
+                    <td><input type="color" id="favcolor" name="favcolor" value="#ff0000"></td>
+                    <td><input title="Push for colored light." type="button" class="button" id="btnColor" value="Color"></td>
+                    <td><input title="Push for right green light." type="button" class="button" id="btnGreen" value="Green"></td>
+                </tr>
+                <tr>
+                    <td><input title="Police lights." type="button" class="button" id="btnPolice" value="Police"></td>
+                    <td><input title="Turn off police lights." type="button" class="button" id="btnPoliceOff" value="Police Off"></td>
+                </tr>
+                <tr>
+                    <td><input title="Activate Watchdog, indicate movement with red light." type="button" class="button" id="btnWatchdog" value="Watchdog"></td>
+                    <td><input title="Turn off Watchdog." type="button" class="button" id="btnWatchdogOff" value="Watchdog Off"></td>
+                </tr>
+                <tr>
+                    <td><input title="Activate face recognition, indicate with green light." type="button" class="button" id="btndetectFaces" value="detectFaces"></td>
+                    <td><input title="Turn off face recognition." type="button" class="button" id="btndetectFacesOff" value="detectFaces Off"></td>
+                </tr>
+                <tr>
+                    <td><input title="Automatic driving and prevent colissions." type="button" class="button" id="btnAutopilot" value="Autopilot"></td>
+                    <td><input title="Turn off automatic driving." type="button" class="button" id="btnAutopilotOff" value="Autopilot Off"></td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
+    </div>
+  </div> 
+  </body>
+</html>
