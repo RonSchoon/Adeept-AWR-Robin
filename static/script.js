@@ -142,5 +142,7 @@ addEventListenerDownUp('btnWatchdog', 'watchdog', null);
 addEventListenerDownUp('btnWatchdogOff', 'watchdogOff', null);
 addEventListenerDownUp('btnAutopilot', 'autopilot', null);
 addEventListenerDownUp('btnAutopilotOff', 'autopilotOff', null);
+addEventListenerDownUp('btnPowerLow', 'powerLow', null);
+addEventListenerDownUp('btnPowerDefault', 'powerDefault', null);
 // request robot status every 5 secs.
 setInterval(info, 1000);
