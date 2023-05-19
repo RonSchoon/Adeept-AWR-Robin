@@ -31,6 +31,10 @@ function info() {
   fetchCommand('info');
 }
 
+function isTouchEnabled() {
+    return ( 'ontouchstart' in window );
+}
+
 ///////////
 // Helpers
 // adds left mouse button down and up handlers for given html button ids
@@ -38,7 +42,7 @@ function info() {
 function addEventListenerDownUp(id, functionDown, functionUp, params) {
     let element = document.getElementById(id);
     if (element !== null) {
-        if ('ontouchstart' in window) {
+        if (isTouchEnabled()) {
             if (functionDown !== null) {
 				if (typeof params !== "undefined") {
 					element.addEventListener("touchstart", fetchCommand(functionDown, document.getElementById("favcolor").value));
