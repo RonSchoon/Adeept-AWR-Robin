@@ -251,6 +251,12 @@ def index():
             fuc.pause()
             move.motorStop()
             return 'Autopilot off'
+        elif 'powerLow' == command_input:
+            power.low()
+            return 'power low'
+        elif 'powerDefault' == command_input:
+            power.default()
+            return 'power default'
         elif 'info' == command_input:
             systemInfo = 'CPU Temp: {}, CPU Use: {} RAM Use: {}'.format(info.get_cpu_tempfunc(), info.get_cpu_use(), info.get_ram_info())
             print(systemInfo)
