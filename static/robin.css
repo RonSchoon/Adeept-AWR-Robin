@@ -3,3 +3,7 @@ body {
 	background-color: #6c6c6c;
 	color: #101010;
 }
+input[type=text] {
+	border: none;
+	border-bottom: 2px solid red;
+}
