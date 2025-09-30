@@ -22,6 +22,7 @@ import json
 face_cascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")	# load haar cascade object to detect faces in a video 
 smile_cascade = cv2.CascadeClassifier("haarcascade_smile.xml")
 camera = Picamera2()
+print("Camera Model:", camera.camera_properties.get("Model"))
 camera.configure(camera.create_video_configuration(
 	main={"size": (320, 240)},
 	controls={"FrameDurationLimits": (33333, 33333),
