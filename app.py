@@ -1,7 +1,8 @@
 #!/usr/bin/env python
+# 20250930, RS: Replaced ccamera capture by CV2 with Picamera2
 from flask import Flask, render_template, Response, request, jsonify
 from flask_httpauth import HTTPDigestAuth
-# from camera_pi import Camera
+from picamera2 import Picamera2
 import cv2, numpy # real-time computer vision
 import move
 import info
@@ -20,11 +21,9 @@ import json
 # Video capturing and detection
 face_cascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")	# load haar cascade object to detect faces in a video 
 smile_cascade = cv2.CascadeClassifier("haarcascade_smile.xml")
-camera = cv2.VideoCapture(0)	# capture video from primary camera (0)
-camX = 320
-camY = 240
-camera.set(3, camX)  # Set horizontal resolution
-camera.set(4, camY)  # Set vertical resolution
+camera = Picamera2()
+camera.configure(camera.create_video_configuration(main={"size": (320, 240)}))
+camera.start()
 watchDog = False
 detectFaces = False
 previous_frame = None
@@ -286,4 +285,4 @@ if __name__ == '__main__':
     print(e)
     RL.setColor(0,0,0)
     move.destroy()
-    camera.release()
+    camera.close()
