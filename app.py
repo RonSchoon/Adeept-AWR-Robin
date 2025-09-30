@@ -84,15 +84,15 @@ power.low()
 # Video streaming generator function.
 def gen_frames():
 	global watchDog, detectFaces
-	while camera.isOpened():
-		success, frame = camera.read()	# capture video frame from second read() parameter
+	while True:
+		frame = camera.capture_array()	# capture video frame from second read() parameter
 		if watchDog:
 			frame = detectMotion(frame)
 		elif detectFaces:
 			frame = detectFaces(frame)	# add detected faces to frame
 		jpeg = cv2.imencode('.jpg', frame)[1].tobytes()	# convert frame to jpg
 		yield b'--frame\r\n' + b'Content-Type: image/jpeg\r\n\r\n' + jpeg + b'\r\n'
-	camera.release()
+	camera.close()
 	yield b'--frame\r\n'
 
 def detectFaces(frame):
