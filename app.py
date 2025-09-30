@@ -24,7 +24,8 @@ smile_cascade = cv2.CascadeClassifier("haarcascade_smile.xml")
 camera = Picamera2()
 camera.configure(camera.create_video_configuration(
 	main={"size": (320, 240)},
-	controls={"FrameDurationLimits": (33333, 33333)}
+	controls={"FrameDurationLimits": (33333, 33333),
+			  "NoiseReductionMode": controls.draft.NoiseReductionModeEnum.Fast}
 )) # framerate fixed to 30 frames/s
 camera.start()
 watchDog = False
